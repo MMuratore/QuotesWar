@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="EfCoreDialogsState">
+    <option name="keyValueStorage">
+      <map>
+        <entry key="Common:0182a40d-d44b-41fc-9e60-b2982df1d1b3:dbContext" value="QuotesWar.Infrastructure.Persistence.QuoteDbContext" />
+        <entry key="Common:buildConfiguration" value="Debug" />
+        <entry key="Common:noBuild" value="false" />
+        <entry key="Common:outputFolder" value="Persistence\Migrations" />
+      </map>
+    </option>
+  </component>
+</project>

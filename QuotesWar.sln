@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B8D04639-79DF-4196-B3F0-7F0453903337}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuotesWar.Api", "src\QuotesWar.Api\QuotesWar.Api.csproj", "{16D3C162-FA16-4573-ACA8-10D00078D8E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuotesWar.Infrastructure", "src\QuotesWar.Infrastructure\QuotesWar.Infrastructure.csproj", "{0182A40D-D44B-41FC-9E60-B2982DF1D1B3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{16D3C162-FA16-4573-ACA8-10D00078D8E3} = {B8D04639-79DF-4196-B3F0-7F0453903337}
+		{0182A40D-D44B-41FC-9E60-B2982DF1D1B3} = {B8D04639-79DF-4196-B3F0-7F0453903337}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16D3C162-FA16-4573-ACA8-10D00078D8E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16D3C162-FA16-4573-ACA8-10D00078D8E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16D3C162-FA16-4573-ACA8-10D00078D8E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16D3C162-FA16-4573-ACA8-10D00078D8E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0182A40D-D44B-41FC-9E60-B2982DF1D1B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0182A40D-D44B-41FC-9E60-B2982DF1D1B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0182A40D-D44B-41FC-9E60-B2982DF1D1B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0182A40D-D44B-41FC-9E60-B2982DF1D1B3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
