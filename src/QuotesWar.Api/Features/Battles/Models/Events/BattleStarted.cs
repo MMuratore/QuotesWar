@@ -2,4 +2,4 @@
 
 namespace QuotesWar.Api.Features.Battles.Models.Events;
 
-public record BattleStarted(Guid BattleId, DateTimeOffset OccurredOn, params Challenger[] Challengers) : IDomainEvent;
+public record BattleStarted(Guid BattleId, DateTimeOffset OccuredAt, params Challenger[] Challengers) : IDomainEvent;

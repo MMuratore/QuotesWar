@@ -29,19 +29,27 @@ public sealed class Battle : Entity, IAggregateRoot
         if (!Challengers.Exists(x => x.Id == quoteId))
             throw new ArgumentException("Quote is not in the battle", nameof(quoteId));
         if (Status == BattleStatus.Close) throw new Exception("Battle is closed");
-        ;
 
-        var @event = new BattleVoted(Id, quoteId, DateTimeOffset.Now);
+        var @event = new BattleVoted(Id, quoteId);
 
         Apply(@event);
         AddDomainEvent(@event);
+    }
+
+    public IEnumerable<BattleQuote> GetBattleQuotes()
+    {
+        var @event = new BattleQuotesGet(Id);
+
+        Apply(@event);
+        AddDomainEvent(@event);
+        return Challengers.Select(x => new BattleQuote(x.Id, x.Quote));
     }
 
     public void CloseBattle()
     {
         if (Status == BattleStatus.Close) return;
 
-        var @event = new BattleClosed(Id, DateTimeOffset.Now);
+        var @event = new BattleClosed(Id);
 
         Apply(@event);
         AddDomainEvent(@event);
@@ -50,7 +58,7 @@ public sealed class Battle : Entity, IAggregateRoot
     private void Apply(BattleStarted @event)
     {
         Challengers.AddRange(@event.Challengers);
-        Day = DateOnly.FromDateTime(@event.OccurredOn.Date);
+        Day = DateOnly.FromDateTime(@event.OccuredAt.Date);
         Status = BattleStatus.Open;
         Version++;
     }
@@ -58,6 +66,11 @@ public sealed class Battle : Entity, IAggregateRoot
     private void Apply(BattleVoted @event)
     {
         Challengers.Single(x => x.Id == @event.QuoteId).Score++;
+        Version++;
+    }
+
+    private void Apply(BattleQuotesGet @event)
+    {
         Version++;
     }
 

@@ -10,7 +10,7 @@ namespace QuotesWar.Api.Features.Battles;
 
 public class BattleOfTheDayBackgroundService : BackgroundService
 {
-    private const string Schedule = "0 6 * * *"; //	every day 6am
+    private const string Schedule = "*/10 * * * *"; //	At every 10th minute.
     private const int NumberOfChallenger = 2;
     private readonly ILogger<BattleOfTheDayBackgroundService> _logger;
     private readonly CrontabSchedule _schedule;
@@ -23,7 +23,7 @@ public class BattleOfTheDayBackgroundService : BackgroundService
         _serviceProvider = serviceProvider;
         _logger = logger;
         _schedule = CrontabSchedule.Parse(Schedule);
-        var battleStartedTime = GetLastBattleStarted(serviceProvider)?.OccurredOn.DateTime;
+        var battleStartedTime = GetLastBattleStarted(serviceProvider)?.OccuredAt.DateTime;
         _nextRun = battleStartedTime is not null
             ? _schedule.GetNextOccurrence(battleStartedTime.Value)
             : DateTimeOffset.MinValue;
@@ -37,7 +37,7 @@ public class BattleOfTheDayBackgroundService : BackgroundService
             if (now > _nextRun)
             {
                 var battleStarted = await UpdateBattleStreamAsync(stoppingToken);
-                _nextRun = _schedule.GetNextOccurrence(battleStarted.OccurredOn.DateTime);
+                _nextRun = _schedule.GetNextOccurrence(battleStarted.OccuredAt.DateTime);
             }
 
             await Task.Delay(_nextRun - now, stoppingToken);
@@ -82,7 +82,7 @@ public class BattleOfTheDayBackgroundService : BackgroundService
         using var scope = serviceProvider.CreateScope();
 
         var session = scope.ServiceProvider.GetRequiredService<IDocumentSession>();
-        return session.Events.QueryRawEventDataOnly<BattleStarted>().OrderByDescending(x => x.OccurredOn)
+        return session.Events.QueryRawEventDataOnly<BattleStarted>().OrderByDescending(x => x.OccuredAt)
             .FirstOrDefault();
     }
 }

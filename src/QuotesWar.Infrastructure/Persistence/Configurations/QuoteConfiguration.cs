@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using QuotesWar.Infrastructure.Models;
+using QuotesWar.Infrastructure.Persistence.Entities;
+using QuotesWar.Infrastructure.Persistence.Seeds;
 
-namespace QuotesWar.Infrastructure.Persistence;
+namespace QuotesWar.Infrastructure.Persistence.Configurations;
 
 internal sealed class QuoteConfiguration : IEntityTypeConfiguration<Quote>
 {

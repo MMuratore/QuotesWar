@@ -1,4 +1,4 @@
-﻿namespace QuotesWar.Infrastructure.Models;
+﻿namespace QuotesWar.Infrastructure.Persistence.Entities;
 
 public enum Faction
 {

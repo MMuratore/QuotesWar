@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using QuotesWar.Api.Features.Battles.Models;
+﻿using QuotesWar.Api.Features.Battles.Models;
 using QuotesWar.Infrastructure.Marten;
 
 namespace QuotesWar.Api.Features.Battles.VoteForTheQuote;
@@ -10,36 +9,29 @@ internal static class Endpoint
 
     internal static IEndpointRouteBuilder MapVoteForTheQuote(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapPost("battle/vote",
-            async (IMemoryCache cache, IEventStoreRepository<Battle> repository, Guid quoteId,
-                CancellationToken cancellationToken) =>
+        endpoints.MapPost("battle/{id:guid}/vote",
+            async (HttpContext context, LinkGenerator linkGenerator, IEventStoreRepository<Battle> repository,
+                Guid quoteId,
+                CancellationToken cancellationToken, Guid id) =>
             {
-                if (!cache.TryGetValue(CacheKey, out Guid battleId))
-                {
-                    battleId = GetDayBattleId();
-                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
-                    cache.Set(CacheKey, battleId, cacheEntryOptions);
-                }
-
-                var battle = await repository.LoadAsync(battleId, cancellationToken: cancellationToken);
+                var battle = await repository.LoadAsync(id, cancellationToken: cancellationToken);
                 battle.VoteForTheQuote(quoteId);
                 await repository.StoreAsync(battle, cancellationToken);
 
-                return TypedResults.Accepted($"battle/{battleId}/results");
-            });
+                return TypedResults.Accepted(GetLocation(context, linkGenerator, id));
+            }).WithName("VoteForTheQuote");
 
         return endpoints;
     }
 
-    private static Guid GetDayBattleId()
-    {
-        throw new NotImplementedException();
-    }
+    private static string? GetLocation(HttpContext context, LinkGenerator linkGenerator, Guid id) =>
+        linkGenerator.GetUriByName(context, "GetBattleOfTheDayResults", new {id});
 
     internal static IEndpointRouteBuilder MapGetBattleOfTheDayResults(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("battle/{id:guid}/results",
-            async (Guid id, CancellationToken cancellationToken) => { throw new NotImplementedException(); });
+                async (Guid id, CancellationToken cancellationToken) => { throw new NotImplementedException(); })
+            .WithName("GetBattleOfTheDayResults");
 
         return endpoints;
     }

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using QuotesWar.Infrastructure.Models;
+using QuotesWar.Infrastructure.Persistence.Entities;
 
 namespace QuotesWar.Infrastructure.Persistence;
 

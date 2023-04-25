@@ -17,8 +17,11 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<DatabaseHostedService<QuoteDbContext>>();
 
         services.AddMarten(options =>
+            {
                 options.Connection(configuration.GetConnectionString("QuotesWarEventDatabase") ??
-                                   throw new InvalidOperationException()))
+                                   throw new InvalidOperationException());
+                options.Events.DatabaseSchemaName = "events";
+            })
             .UseLightweightSessions();
 
         services.AddScoped(typeof(IEventStoreRepository<>), typeof(EventStoreRepository<>));

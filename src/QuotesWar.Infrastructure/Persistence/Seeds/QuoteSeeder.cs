@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using QuotesWar.Infrastructure.Models;
+using QuotesWar.Infrastructure.Persistence.Entities;
 
-namespace QuotesWar.Infrastructure.Persistence;
+namespace QuotesWar.Infrastructure.Persistence.Seeds;
 
 internal static class QuoteSeeder
 {

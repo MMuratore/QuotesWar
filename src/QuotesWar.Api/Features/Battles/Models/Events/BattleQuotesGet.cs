@@ -2,4 +2,4 @@
 
 namespace QuotesWar.Api.Features.Battles.Models.Events;
 
-public record BattleVoted(Guid BattleId, Guid QuoteId) : IDomainEvent;
+public record BattleQuotesGet(Guid BattleId) : IDomainEvent;
