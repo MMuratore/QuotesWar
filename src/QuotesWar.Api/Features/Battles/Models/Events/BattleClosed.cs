@@ -2,4 +2,4 @@
 
 namespace QuotesWar.Api.Features.Battles.Models.Events;
 
-public record BattleClosed(Guid BattleId) : IDomainEvent;
+public record BattleClosed(Guid BattleId, DateTimeOffset OccuredAt) : IDomainEvent;

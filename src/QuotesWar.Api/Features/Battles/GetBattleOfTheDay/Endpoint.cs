@@ -18,11 +18,13 @@ internal static class Endpoint
             {
                 var battleId = GetBattleOfTheDayId(cache, session);
 
-                var battle = await repository.LoadAsync(battleId, cancellationToken: cancellationToken);
+                if (battleId is null) return Results.NoContent();
+
+                var battle = await repository.LoadAsync(battleId.Value, cancellationToken: cancellationToken);
                 var quotes = battle.GetBattleQuotes();
                 await repository.StoreAsync(battle, cancellationToken);
 
-                return TypedResults.Accepted(GetLocation(context, linkGenerator, battleId), quotes);
+                return TypedResults.Accepted(GetLocation(context, linkGenerator, battleId.Value), quotes);
             }).WithName("GetBattleOfTheDay");
 
         return endpoints;
@@ -31,13 +33,19 @@ internal static class Endpoint
     private static string? GetLocation(HttpContext context, LinkGenerator linkGenerator, Guid id) =>
         linkGenerator.GetUriByName(context, "VoteForTheQuote", new {id});
 
-    private static Guid GetBattleOfTheDayId(IMemoryCache cache, IDocumentSession session)
+    private static Guid? GetBattleOfTheDayId(IMemoryCache cache, IDocumentSession session)
     {
         if (cache.TryGetValue(CacheKey, out Guid battleId)) return battleId;
+
+        var closedBattleId = session.Events.QueryRawEventDataOnly<BattleClosed>().OrderByDescending(x => x.OccuredAt)
+            .Select(x => x.BattleId)
+            .FirstOrDefault();
 
         battleId = session.Events.QueryRawEventDataOnly<BattleStarted>().OrderByDescending(x => x.OccuredAt)
             .Select(x => x.BattleId)
             .FirstOrDefault();
+
+        if (closedBattleId == battleId) return null;
 
         var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
         cache.Set(CacheKey, battleId, cacheEntryOptions);

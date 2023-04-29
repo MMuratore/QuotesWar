@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
             {
                 options.Connection(configuration.GetConnectionString("QuotesWarEventDatabase") ??
                                    throw new InvalidOperationException());
-                options.Events.DatabaseSchemaName = "events";
+                options.DatabaseSchemaName = "event_store";
             })
             .UseLightweightSessions();
 

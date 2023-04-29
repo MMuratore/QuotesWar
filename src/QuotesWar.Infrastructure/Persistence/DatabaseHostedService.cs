@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace QuotesWar.Infrastructure.Persistence;
 
-internal sealed class DatabaseHostedService<TDbContext> : IHostedService where TDbContext : DbContext
+internal sealed class DatabaseHostedService<TDbContext> : BackgroundService where TDbContext : DbContext
 {
     private readonly ILogger<DatabaseHostedService<TDbContext>> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
@@ -18,30 +18,22 @@ internal sealed class DatabaseHostedService<TDbContext> : IHostedService where T
         _logger = logger;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Applying migrations for {DbContext}", typeof(TDbContext).ShortDisplayName());
 
-        var scope = _scopeFactory.CreateScope();
+        using var scope = _scopeFactory.CreateScope();
 
         try
         {
             _context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-            await _context.Database.MigrateAsync(cancellationToken);
+            await _context.Database.MigrateAsync(stoppingToken);
 
             _logger.LogInformation("Migrations completed for {DbContext}", typeof(TDbContext).ShortDisplayName());
         }
-        finally
+        catch (Exception ex)
         {
-            if (scope is IAsyncDisposable asyncDisposable)
-                await asyncDisposable.DisposeAsync();
-            else
-                scope.Dispose();
+            _logger.LogCritical(ex, "Migrations failed for {DbContext}", typeof(TDbContext).ShortDisplayName());
         }
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
     }
 }

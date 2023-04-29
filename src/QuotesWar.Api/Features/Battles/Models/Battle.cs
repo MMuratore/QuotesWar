@@ -49,7 +49,7 @@ public sealed class Battle : Entity, IAggregateRoot
     {
         if (Status == BattleStatus.Close) return;
 
-        var @event = new BattleClosed(Id);
+        var @event = new BattleClosed(Id, DateTimeOffset.Now);
 
         Apply(@event);
         AddDomainEvent(@event);

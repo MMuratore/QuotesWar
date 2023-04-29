@@ -5,8 +5,6 @@ namespace QuotesWar.Api.Features.Battles.VoteForTheQuote;
 
 internal static class Endpoint
 {
-    private const string CacheKey = "battleOfTheDayId";
-
     internal static IEndpointRouteBuilder MapVoteForTheQuote(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapPost("battle/{id:guid}/vote",
