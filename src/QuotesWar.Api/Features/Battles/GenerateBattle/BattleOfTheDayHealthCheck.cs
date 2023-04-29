@@ -11,8 +11,14 @@ public sealed class BattleOfTheDayHealthCheck : IHealthCheck
         HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(_isRunning
-            ? HealthCheckResult.Healthy("Battle of the day task his running.")
+            ? HealthCheckResult.Healthy()
             : HealthCheckResult.Unhealthy($"Battle of the day task has stopped.", _exception));
+    }
+
+    public void Run()
+    {
+        _isRunning = true;
+        _exception = default;
     }
 
     public void Crash(Exception? exception = default)

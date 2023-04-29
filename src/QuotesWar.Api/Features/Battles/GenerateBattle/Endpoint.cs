@@ -5,18 +5,16 @@ internal static class Endpoint
     internal static IEndpointRouteBuilder MapGenerateBattle(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapPost("battle/start",
-            async (BattleOfTheDayHostedService hostedService, CancellationToken cancellationToken) =>
+            async (BattleOfTheDayRequestsChannel channel, CancellationToken cancellationToken) =>
             {
-                await hostedService.StartAsync(cancellationToken);
-
+                await channel.Requests.Writer.WriteAsync(new StartBattle(), cancellationToken);
                 return Results.Accepted();
             }).WithName("StartBattleOfTheDay");
 
         endpoints.MapPost("battle/stop",
-            async (BattleOfTheDayHostedService hostedService, CancellationToken cancellationToken) =>
+            async (BattleOfTheDayRequestsChannel channel, CancellationToken cancellationToken) =>
             {
-                await hostedService.StopAsync(cancellationToken);
-
+                await channel.Requests.Writer.WriteAsync(new StopBattle(), cancellationToken);
                 return Results.Accepted();
             }).WithName("StopBattleOfTheDay");
 
