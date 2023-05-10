@@ -1,64 +1,78 @@
 ﻿using System.Runtime.CompilerServices;
 using Marten;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using NCrontab;
 using QuotesWar.Api.Features.Battles.Models;
 using QuotesWar.Api.Features.Battles.Models.Events;
+using QuotesWar.Infrastructure.HostedService;
 using QuotesWar.Infrastructure.Persistence;
 
-namespace QuotesWar.Api.Features.Battles.GenerateBattle;
+namespace QuotesWar.Api.Features.Battles.BattleOfTheDay;
 
-internal sealed class ChallengersGenerator : IAsyncGenerator<IEnumerable<Challenger>>
+public sealed class ChallengersGenerator : IAsyncGenerator<IEnumerable<Challenger>>
 {
     private readonly ILogger<ChallengersGenerator> _logger;
-    private readonly BattleOfTheDayOptions _options;
+    private readonly BattleGeneratorOptions _options;
     private readonly CrontabSchedule _schedule;
-    private readonly IServiceProvider _serviceProvider;
-    private bool _isRunning;
-
+    private CancellationTokenSource _cancellationTokenSource;
     private DateTimeOffset _nextRun;
 
-    public ChallengersGenerator(IOptions<BattleOfTheDayOptions> options, IServiceProvider serviceProvider,
-        ILogger<ChallengersGenerator> logger)
+    public ChallengersGenerator(BattleGeneratorOptions options, ILogger<ChallengersGenerator> logger)
     {
         _logger = logger;
-        _serviceProvider = serviceProvider;
-        _schedule = CrontabSchedule.Parse(options.Value.Schedule);
-        _options = options.Value;
+        _options = options;
+        _schedule = CrontabSchedule.Parse(options.Schedule);
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
-    public async IAsyncEnumerable<IEnumerable<Challenger>> StartAsync(
+    public async IAsyncEnumerable<IEnumerable<Challenger>> StartAsync(IServiceScope scope,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        _isRunning = true;
-
-        using var scope = _serviceProvider.CreateScope();
+        _cancellationTokenSource =
+            CancellationTokenSource.CreateLinkedTokenSource(new CancellationToken(), cancellationToken);
         var session = scope.ServiceProvider.GetRequiredService<IDocumentSession>();
         var context = scope.ServiceProvider.GetRequiredService<QuoteDbContext>();
 
         SetInitialNextRun(session);
 
-        while (_isRunning)
+        while (!_cancellationTokenSource.IsCancellationRequested)
         {
-            if (!_isRunning) yield break;
-
             var now = DateTimeOffset.Now;
             if (now > _nextRun)
             {
-                var challengers = await GetNewChallengers(context, cancellationToken);
-                yield return challengers;
-                _logger.LogInformation("new challengers generated");
-                _nextRun = _schedule.GetNextOccurrence(now.DateTime);
+                var newChallengers = Enumerable.Empty<Challenger>();
+                try
+                {
+                    newChallengers = await GetNewChallengers(context, _cancellationTokenSource.Token);
+                }
+                catch (TaskCanceledException e)
+                {
+                }
+
+                var challengers = newChallengers.ToList();
+                if (challengers.Any())
+                {
+                    yield return challengers;
+                    _logger.LogInformation("new challengers generated");
+                    _nextRun = _schedule.GetNextOccurrence(now.DateTime);
+                }
             }
 
-            await Task.Delay(_nextRun - now, cancellationToken);
+            try
+            {
+                await Task.Delay(_nextRun - now, _cancellationTokenSource.Token);
+            }
+            catch (TaskCanceledException e)
+            {
+            }
         }
+
+        _logger.LogInformation("challengers generation stopped");
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
     {
-        _isRunning = false;
+        _cancellationTokenSource.Cancel();
         return Task.CompletedTask;
     }
 

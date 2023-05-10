@@ -1,6 +1,6 @@
 ﻿using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using QuotesWar.Api.Features.Battles.GenerateBattle;
+using QuotesWar.Infrastructure.HostedService;
 
 namespace QuotesWar.Api.Configurations;
 
@@ -22,9 +22,9 @@ public static class ConfigureHealthCheck
             tags: new[] {"postgres"});
 
         hcBuilder
-            .AddCheck<BattleOfTheDayHealthCheck>(
-                "battle-of-the-day-check",
-                tags: new[] {"battle"});
+            .AddCheck<HostedServiceHealthCheck>(
+                "hosted-service-check",
+                tags: new[] {"hosted"});
 
         return services;
     }

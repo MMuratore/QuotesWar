@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace QuotesWar.Api.Features.Battles.GenerateBattle;
+namespace QuotesWar.Infrastructure.HostedService;
 
-public sealed class BattleOfTheDayHealthCheck : IHealthCheck
+public class HostedServiceHealthCheck : IHealthCheck
 {
     private Exception? _exception;
     private bool _isRunning = true;
@@ -12,7 +12,7 @@ public sealed class BattleOfTheDayHealthCheck : IHealthCheck
     {
         return Task.FromResult(_isRunning
             ? HealthCheckResult.Healthy()
-            : HealthCheckResult.Unhealthy($"Battle of the day task has stopped.", _exception));
+            : HealthCheckResult.Unhealthy($"Hosted service has stopped.", _exception));
     }
 
     public void Run()
