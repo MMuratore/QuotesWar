@@ -1,6 +1,7 @@
 ﻿using QuotesWar.Api.Features.Battles.BattleOfTheDay;
-using QuotesWar.Api.Features.Battles.GetBattleOfTheDay;
-using QuotesWar.Api.Features.Battles.VoteForTheQuote;
+using QuotesWar.Api.Features.Battles.BattleOfTheDay.GenerateBattle;
+using QuotesWar.Api.Features.Battles.BattleOfTheDay.GetBattleOfTheDay;
+using QuotesWar.Api.Features.Battles.BattleOfTheDay.VoteForTheQuote;
 
 namespace QuotesWar.Api.Features.Battles;
 

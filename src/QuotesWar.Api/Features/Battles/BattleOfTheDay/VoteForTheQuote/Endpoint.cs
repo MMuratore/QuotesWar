@@ -1,7 +1,7 @@
-﻿using QuotesWar.Api.Features.Battles.Models;
+﻿using QuotesWar.Api.Features.Battles.BattleOfTheDay.Models;
 using QuotesWar.Infrastructure.Marten;
 
-namespace QuotesWar.Api.Features.Battles.VoteForTheQuote;
+namespace QuotesWar.Api.Features.Battles.BattleOfTheDay.VoteForTheQuote;
 
 internal static class Endpoint
 {

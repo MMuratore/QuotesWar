@@ -1,4 +1,4 @@
-﻿namespace QuotesWar.Api.Features.Battles.BattleOfTheDay;
+﻿namespace QuotesWar.Api.Features.Battles.BattleOfTheDay.GenerateBattle;
 
 public class BattleOfTheDayOptions
 {

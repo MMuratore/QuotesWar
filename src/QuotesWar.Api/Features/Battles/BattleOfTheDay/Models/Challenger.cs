@@ -1,4 +1,4 @@
-﻿namespace QuotesWar.Api.Features.Battles.Models;
+﻿namespace QuotesWar.Api.Features.Battles.BattleOfTheDay.Models;
 
 public class Challenger
 {

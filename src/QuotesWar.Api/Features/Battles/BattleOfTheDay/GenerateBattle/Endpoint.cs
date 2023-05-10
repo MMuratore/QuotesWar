@@ -1,6 +1,6 @@
 ﻿using QuotesWar.Infrastructure.HostedService.Channel;
 
-namespace QuotesWar.Api.Features.Battles.BattleOfTheDay;
+namespace QuotesWar.Api.Features.Battles.BattleOfTheDay.GenerateBattle;
 
 internal static class Endpoint
 {

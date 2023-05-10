@@ -2,12 +2,12 @@
 using Marten;
 using Microsoft.EntityFrameworkCore;
 using NCrontab;
-using QuotesWar.Api.Features.Battles.Models;
-using QuotesWar.Api.Features.Battles.Models.Events;
+using QuotesWar.Api.Features.Battles.BattleOfTheDay.Models;
+using QuotesWar.Api.Features.Battles.BattleOfTheDay.Models.Events;
 using QuotesWar.Infrastructure.HostedService;
 using QuotesWar.Infrastructure.Persistence;
 
-namespace QuotesWar.Api.Features.Battles.BattleOfTheDay;
+namespace QuotesWar.Api.Features.Battles.BattleOfTheDay.GenerateBattle;
 
 public sealed class ChallengersGenerator : IAsyncGenerator<IEnumerable<Challenger>>
 {
@@ -17,13 +17,16 @@ public sealed class ChallengersGenerator : IAsyncGenerator<IEnumerable<Challenge
     private CancellationTokenSource _cancellationTokenSource;
     private DateTimeOffset _nextRun;
 
-    public ChallengersGenerator(BattleGeneratorOptions options, ILogger<ChallengersGenerator> logger)
+    public ChallengersGenerator(string name, BattleGeneratorOptions options, ILogger<ChallengersGenerator> logger)
     {
         _logger = logger;
+        Name = name;
         _options = options;
         _schedule = CrontabSchedule.Parse(options.Schedule);
         _cancellationTokenSource = new CancellationTokenSource();
     }
+
+    public string Name { get; }
 
     public async IAsyncEnumerable<IEnumerable<Challenger>> StartAsync(IServiceScope scope,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)

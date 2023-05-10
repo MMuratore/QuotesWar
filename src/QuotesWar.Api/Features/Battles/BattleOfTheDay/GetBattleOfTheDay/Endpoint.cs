@@ -1,10 +1,10 @@
 ﻿using Marten;
 using Microsoft.Extensions.Caching.Memory;
-using QuotesWar.Api.Features.Battles.Models;
-using QuotesWar.Api.Features.Battles.Models.Events;
+using QuotesWar.Api.Features.Battles.BattleOfTheDay.Models;
+using QuotesWar.Api.Features.Battles.BattleOfTheDay.Models.Events;
 using QuotesWar.Infrastructure.Marten;
 
-namespace QuotesWar.Api.Features.Battles.GetBattleOfTheDay;
+namespace QuotesWar.Api.Features.Battles.BattleOfTheDay.GetBattleOfTheDay;
 
 internal static class Endpoint
 {

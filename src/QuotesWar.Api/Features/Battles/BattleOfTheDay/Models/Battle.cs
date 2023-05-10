@@ -1,16 +1,16 @@
-﻿using QuotesWar.Api.Features.Battles.Models.Events;
+﻿using QuotesWar.Api.Features.Battles.BattleOfTheDay.Models.Events;
 using QuotesWar.Infrastructure.Core;
 
-namespace QuotesWar.Api.Features.Battles.Models;
+namespace QuotesWar.Api.Features.Battles.BattleOfTheDay.Models;
 
 public sealed class Battle : Entity, IAggregateRoot
 {
-    public Battle(params Challenger[] challengers)
+    public Battle(string name, params Challenger[] challengers)
     {
         if (challengers.Length < 2)
             throw new ArgumentException("There must have 2 challengers minimum in the battle", nameof(challengers));
 
-        var @event = new BattleStarted(Id, DateTimeOffset.Now, challengers);
+        var @event = new BattleStarted(Id, name, DateTimeOffset.Now, challengers);
 
         Apply(@event);
         AddDomainEvent(@event);
@@ -23,6 +23,8 @@ public sealed class Battle : Entity, IAggregateRoot
     public List<Challenger> Challengers { get; private set; } = new();
     public BattleStatus Status { get; private set; }
     public DateOnly Day { get; private set; }
+
+    public string Name { get; private set; }
 
     public void VoteForTheQuote(Guid quoteId)
     {
@@ -60,6 +62,7 @@ public sealed class Battle : Entity, IAggregateRoot
         Challengers.AddRange(@event.Challengers);
         Day = DateOnly.FromDateTime(@event.OccuredAt.Date);
         Status = BattleStatus.Open;
+        Name = @event.Name;
         Version++;
     }
 
