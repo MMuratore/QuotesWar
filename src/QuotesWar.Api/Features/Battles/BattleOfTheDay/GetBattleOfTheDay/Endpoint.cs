@@ -12,20 +12,23 @@ internal static class Endpoint
 
     internal static IEndpointRouteBuilder MapGetBattleOfTheDay(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("battle/{name}",
-            async (HttpContext context, IMemoryCache cache, LinkGenerator linkGenerator, IDocumentSession session,
-                IEventStoreRepository<Battle> repository, CancellationToken cancellationToken, string name) =>
-            {
-                var battleId = GetBattleOfTheDayId(cache, session, name);
+        endpoints.MapGet("battles/{name}",
+                async (HttpContext context, IMemoryCache cache, LinkGenerator linkGenerator, IDocumentSession session,
+                    IEventStoreRepository<Battle> repository, CancellationToken cancellationToken, string name) =>
+                {
+                    var battleId = GetBattleOfTheDayId(cache, session, name);
 
-                if (battleId is null) return Results.NoContent();
+                    if (battleId is null) return Results.NoContent();
 
-                var battle = await repository.LoadAsync(battleId.Value, cancellationToken: cancellationToken);
-                var quotes = battle.GetBattleQuotes();
-                await repository.StoreAsync(battle, cancellationToken);
+                    var battle = await repository.LoadAsync(battleId.Value, cancellationToken: cancellationToken);
+                    var quotes = battle.GetBattleQuotes();
+                    await repository.StoreAsync(battle, cancellationToken);
 
-                return TypedResults.Accepted(GetLocation(context, linkGenerator, battleId.Value), quotes);
-            }).WithName("GetBattleOfTheDay");
+                    return TypedResults.Accepted(GetLocation(context, linkGenerator, battleId.Value), quotes);
+                })
+            .WithName("GetBattleOfTheDay")
+            .WithSummary("Gets all quotes of the battle")
+            .WithOpenApi();
 
         return endpoints;
     }
