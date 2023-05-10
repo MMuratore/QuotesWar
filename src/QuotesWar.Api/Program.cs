@@ -20,6 +20,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+await app.UseBattleModuleAsync();
 app.MapBattleModule();
 app.MapHealthChecks();
 

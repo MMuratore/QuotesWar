@@ -11,4 +11,5 @@ public class BattleGeneratorOptions
     public string Name { get; set; } = string.Empty;
     public string Schedule { get; set; } = "*/10 * * * *"; //	At every 10th minute.
     public int NumberOfChallenger { get; set; } = 2;
+    public bool AutoStart { get; set; } = true;
 }

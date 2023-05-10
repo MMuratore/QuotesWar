@@ -14,6 +14,13 @@ internal static class ServiceCollectionExtensions
         return services;
     }
 
+    public static async Task<IApplicationBuilder> UseBattleModuleAsync(this IApplicationBuilder app)
+    {
+        await app.USeBattleOfTheDayAsync();
+
+        return app;
+    }
+
     public static IEndpointRouteBuilder MapBattleModule(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGenerateBattle();

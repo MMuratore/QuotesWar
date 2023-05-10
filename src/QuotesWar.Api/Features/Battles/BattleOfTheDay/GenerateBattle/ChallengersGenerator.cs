@@ -87,10 +87,10 @@ public sealed class ChallengersGenerator : IAsyncGenerator<IEnumerable<Challenge
             : DateTimeOffset.MinValue;
     }
 
-    private static BattleStarted? GetLastBattleStartedEvent(IDocumentSession session)
+    private BattleStarted? GetLastBattleStartedEvent(IDocumentSession session)
     {
         return session.Events.QueryRawEventDataOnly<BattleStarted>().OrderByDescending(x => x.OccuredAt)
-            .FirstOrDefault();
+            .FirstOrDefault(x => x.Name == Name);
     }
 
     private async Task<IEnumerable<Challenger>> GetNewChallengers(QuoteDbContext context,

@@ -5,7 +5,7 @@ using QuotesWar.Infrastructure.HostedService.Channel;
 
 namespace QuotesWar.Infrastructure.HostedService;
 
-public class HostedService<TGenerator, THandler, TElement> : BackgroundService
+public class HostedService<TGenerator, THandler, TElement> : BackgroundService, IGeneratorService
     where TGenerator : IAsyncGenerator<TElement>
     where THandler : IHostedServiceHandler<TElement>
 {
@@ -27,7 +27,8 @@ public class HostedService<TGenerator, THandler, TElement> : BackgroundService
         _logger = logger;
     }
 
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; private set; }
+    public int RunningStatus => _runningStatus;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -91,4 +92,10 @@ public class HostedService<TGenerator, THandler, TElement> : BackgroundService
             _logger.LogCritical(ex, "Generator failed");
         }
     }
+}
+
+public interface IGeneratorService
+{
+    public string Name { get; }
+    public int RunningStatus { get; }
 }
